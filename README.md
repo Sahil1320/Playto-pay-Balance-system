@@ -2,6 +2,8 @@
 
 A merchant payout engine for cross-border payment infrastructure. Merchants accumulate balance from international customer payments (USD → INR), and can request payouts to their Indian bank accounts.
 
+👉 **[Read the Deep Dive Explainer (EXPLAINER.md)](./EXPLAINER.md)** to understand the architecture, database locks, idempotency, and Celery background tasks used in this assignment.
+
 ## Architecture
 
 ```
