@@ -14,6 +14,7 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
+    dockerCommand: "bash -c 'celery -A config worker -l info --concurrency=1 -B & gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 2'"
     plan: free
     envVars:
       - key: POSTGRES_DB
@@ -70,54 +71,6 @@ services:
       - key: PYTHON_VERSION
         value: "3.12.0"
 
-  # --- Celery Worker (Background Tasks) ---
-  - type: worker
-    name: playto-pay-celery
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
-    plan: free
-    dockerCommand: "celery -A config worker -l info --concurrency=2 -B"
-    envVars:
-      - key: POSTGRES_DB
-        fromDatabase:
-          name: playto-pay-db
-          property: database
-      - key: POSTGRES_USER
-        fromDatabase:
-          name: playto-pay-db
-          property: user
-      - key: POSTGRES_PASSWORD
-        fromDatabase:
-          name: playto-pay-db
-          property: password
-      - key: POSTGRES_HOST
-        fromDatabase:
-          name: playto-pay-db
-          property: host
-      - key: POSTGRES_PORT
-        fromDatabase:
-          name: playto-pay-db
-          property: port
-      - key: REDIS_URL
-        fromService:
-          name: playto-pay-redis
-          type: redis
-          property: connectionString
-      - key: CELERY_BROKER_URL
-        fromService:
-          name: playto-pay-redis
-          type: redis
-          property: connectionString
-      - key: CELERY_RESULT_BACKEND
-        fromService:
-          name: playto-pay-redis
-          type: redis
-          property: connectionString
-      - key: DJANGO_SECRET_KEY
-        generateValue: true
-      - key: DJANGO_DEBUG
-        value: "False"
 
   # --- Frontend (React SPA — Static Site) ---
   - type: web
